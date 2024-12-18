@@ -8,7 +8,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PointServiceTest {
     // 서비스 테스트케이스
@@ -31,7 +31,7 @@ public class PointServiceTest {
     void useZeroPoint() {
         // 1.1 사용을 실패하는 경우 - 사용할 포인트가 0
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1, 0));
+        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1L, 0L));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class PointServiceTest {
         // 1.2 사용할 포인트가 0보다 작은 경우
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1, -1));
+        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1L, -1L));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class PointServiceTest {
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 0, System.currentTimeMillis()));
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1, 1));
+        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1L, 1L));
     }
 
     @Test
@@ -57,7 +57,8 @@ public class PointServiceTest {
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 2, System.currentTimeMillis()));
 
         // 예외가 발생하면 실패
-        assertDoesNotThrow(() -> uut.usePoint(1, 1));
+        assertDoesNotThrow(() -> uut.usePoint(1L, 1L));
+        verify(userPointRepositoryMock, times(1)).save(1L, 1L);
     }
     @Test
     void useSamePoint() {
@@ -65,7 +66,8 @@ public class PointServiceTest {
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 1, System.currentTimeMillis()));
 
         // 예외가 발생하면 실패
-        assertDoesNotThrow(() -> uut.usePoint(1, 1));
+        assertDoesNotThrow(() -> uut.usePoint(1L, 1L));
+        verify(userPointRepositoryMock, times(1)).save(1L, 0L);
     }
 
     // 2. 포인트 충전
@@ -74,7 +76,7 @@ public class PointServiceTest {
         // 2.1 충전할 포인트가 0인 경우
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, 0));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1L, 0L));
     }
 
     @Test
@@ -82,7 +84,7 @@ public class PointServiceTest {
         // 2.2 충전할 포인트가 0보다 작은 경우
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, -1));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1L, -1L));
     }
 
     @Test
@@ -91,7 +93,7 @@ public class PointServiceTest {
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 0, System.currentTimeMillis()));
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, 10_000_001));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1L, 10_000_001L));
     }
 
     @Test
@@ -100,7 +102,7 @@ public class PointServiceTest {
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 5_000_000, System.currentTimeMillis()));
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, 5_000_001));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1L, 5_000_001L));
     }
 
     @Test
@@ -109,7 +111,8 @@ public class PointServiceTest {
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 5_000_000, System.currentTimeMillis()));
 
         // 예외가 발생하면 실패
-        assertDoesNotThrow(() -> uut.chargePoint(1, 5_000_000));
+        assertDoesNotThrow(() -> uut.chargePoint(1L, 5_000_000L));
+        verify(userPointRepositoryMock, times(1)).save(1L, 10_000_000L);
     }
 
     @Test
@@ -118,7 +121,8 @@ public class PointServiceTest {
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 5_000_000, System.currentTimeMillis()));
 
         // 예외가 발생하면 실패
-        assertDoesNotThrow(() -> uut.chargePoint(1, 4_999_999));
+        assertDoesNotThrow(() -> uut.chargePoint(1L, 4_999_999L));
+        verify(userPointRepositoryMock, times(1)).save(1L, 9_999_999L);
     }
 
     // 3. 포인트 조회
