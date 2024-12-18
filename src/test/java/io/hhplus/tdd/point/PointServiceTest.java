@@ -135,7 +135,7 @@ public class PointServiceTest {
         // 예외가 발생하면 실패
         // 포인트는 0원이어야 함
         assertDoesNotThrow(() -> {
-            UserPoint userPoint = uut.viewPoint(1);
+            UserPoint userPoint = uut.viewPoint(1L);
             assert userPoint.point() == 100;
         });
     }

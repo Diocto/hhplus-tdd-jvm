@@ -42,7 +42,7 @@ public class PointService {
         userPointRepository.save(userId, userPoint.point() + point);
     }
 
-    public UserPoint viewPoint(int userId) {
+    public UserPoint viewPoint(Long userId) {
         return userPointRepository.findByUserId(userId);
     }
 }
