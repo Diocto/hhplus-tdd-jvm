@@ -19,105 +19,120 @@ public class PointServiceTest {
     @Mock
     private UserPointRepository userPointRepositoryMock;
 
+    private PointService uut;
+
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this); // Mock 초기화
+        uut = new PointService(userPointRepositoryMock);
     }
 
     @Test
     void useZeroPoint() {
-        // 1. 포인트 사용
         // 1.1 사용을 실패하는 경우 - 사용할 포인트가 0
-        PointService pointService = new PointService(userPointRepositoryMock);
-
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> pointService.usePoint(1, 0));
+        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1, 0));
     }
 
     @Test
     void useNegativePoint() {
-        // 1. 포인트 사용
-        // 1.4 사용할 포인트가 0보다 작은 경우
-        PointService pointService = new PointService(userPointRepositoryMock);
+        // 1.2 사용할 포인트가 0보다 작은 경우
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> pointService.usePoint(1, -1));
+        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1, -1));
     }
-    // 1. 포인트 사용
 
+    @Test
+    void useOverPoint() {
+        // 1.3 사용을 실패하는 경우 - 사용할 포인트보다 보유한 포인트가 적은 경우
+        when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 0, System.currentTimeMillis()));
 
-    // 1.2 사용을 실패하는 경우 - 사용할 포인트보다 보유한 포인트가 적은 경우
-    // 1.6 사용할 포인트가 남은 포인트보다 적은 경우
-    // 1.7 사용할 포인트가 남은 포인트와 같은 경우
+        // 예외가 발생하지 않으면 실패
+        assertThrows(UserPointBadUsageException.class, () -> uut.usePoint(1, 1));
+    }
+
+    @Test
+    void useLessThanPoint() {
+        // 1.4 사용할 포인트가 남은 포인트보다 적은 경우
+        when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 2, System.currentTimeMillis()));
+
+        // 예외가 발생하면 실패
+        assertDoesNotThrow(() -> uut.usePoint(1, 1));
+    }
+    @Test
+    void useSamePoint() {
+        // 1.5 사용할 포인트가 남은 포인트와 같은 경우
+        when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 1, System.currentTimeMillis()));
+
+        // 예외가 발생하면 실패
+        assertDoesNotThrow(() -> uut.usePoint(1, 1));
+    }
 
     // 2. 포인트 충전
     @Test
     void chargeZeroPoint() {
         // 2.1 충전할 포인트가 0인 경우
-        PointService pointService = new PointService(userPointRepositoryMock);
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> pointService.chargePoint(1, 0));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, 0));
     }
 
     @Test
     void chargeNegativePoint() {
         // 2.2 충전할 포인트가 0보다 작은 경우
-        PointService pointService = new PointService(userPointRepositoryMock);
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> pointService.chargePoint(1, -1));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, -1));
     }
 
     @Test
     void chargeOverMaxPoint() {
         // 2.3 충전할 포인트가 최대치보다 큰 경우
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 0, System.currentTimeMillis()));
-        PointService pointService = new PointService(userPointRepositoryMock);
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> pointService.chargePoint(1, 10_000_001));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, 10_000_001));
     }
 
     @Test
     void chargeOverMaxPointSum() {
         // 2.4 충전할 포인트와 잔고의 합이 최대치보다 큰 경우.
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 5_000_000, System.currentTimeMillis()));
-        PointService pointService = new PointService(userPointRepositoryMock);
 
         // 예외가 발생하지 않으면 실패
-        assertThrows(UserPointBadUsageException.class, () -> pointService.chargePoint(1, 5_000_001));
+        assertThrows(UserPointBadUsageException.class, () -> uut.chargePoint(1, 5_000_001));
     }
 
     @Test
     void chargeMaxPoint() {
         // 2.5 충전할 포인트가 최대치와 같은 경우
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 5_000_000, System.currentTimeMillis()));
-        PointService pointService = new PointService(userPointRepositoryMock);
 
         // 예외가 발생하면 실패
-        assertDoesNotThrow(() -> {
-            pointService.chargePoint(1, 5_000_000);
-        });
+        assertDoesNotThrow(() -> uut.chargePoint(1, 5_000_000));
     }
 
     @Test
     void chargeLessThanMaxPoint() {
         // 2.6 충전할 포인트가 최대치보다 작은 경우
         when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 5_000_000, System.currentTimeMillis()));
-        PointService pointService = new PointService(userPointRepositoryMock);
 
         // 예외가 발생하면 실패
-        assertDoesNotThrow(() -> {
-            pointService.chargePoint(1, 4_999_999);
-        });
+        assertDoesNotThrow(() -> uut.chargePoint(1, 4_999_999));
     }
 
-
     // 3. 포인트 조회
-    // 3.1 조회할 사용자의 포인트를 한번도 충전 안한 경우
-    // 3.2 조회할 사용자의 포인트를 한번 이상 충전한 경우
-    // 3.3 조회할 사용자의 포인트를 한번 이상 충전하고 사용한 경우.
+    // 조회 함수의 책임은 그저 repository 를 호출하여 해당 값을 전달 해 주는 것으로, 테스트 케이스는 repository 가 반환하는 값을 확인하는 것으로 충분하다.
+    @Test
+    void viewPointNeverCharge() {
+        // 3.1 유저의 포인트를 조회하는 경우.
+        when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 100, System.currentTimeMillis()));
 
-
+        // 예외가 발생하면 실패
+        // 포인트는 0원이어야 함
+        assertDoesNotThrow(() -> {
+            UserPoint userPoint = uut.viewPoint(1);
+            assert userPoint.point() == 100;
+        });
+    }
 }

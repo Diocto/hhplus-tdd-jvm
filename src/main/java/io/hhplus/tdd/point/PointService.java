@@ -1,6 +1,5 @@
 package io.hhplus.tdd.point;
 
-import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.exception.UserPointBadUsageException;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +20,11 @@ public class PointService {
         if (point < 0) {
             throw new UserPointBadUsageException("사용할 포인트가 0보다 작습니다.");
         }
+        UserPoint userPoint = userPointRepository.findByUserId(userId);
+        if (userPoint.point() < point) {
+            throw new UserPointBadUsageException("사용할 포인트가 보유한 포인트보다 많습니다.");
+        }
+
     }
 
     public void chargePoint(int userId, int point) {
@@ -37,4 +41,7 @@ public class PointService {
         }
     }
 
+    public UserPoint viewPoint(int userId) {
+        return userPointRepository.findByUserId(userId);
+    }
 }
