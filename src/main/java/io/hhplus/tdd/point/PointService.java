@@ -10,5 +10,8 @@ public class PointService {
         if (point == 0) {
             throw new UserPointBadUsageException("사용할 포인트가 0입니다.");
         }
+        if (point < 0) {
+            throw new UserPointBadUsageException("사용할 포인트가 0보다 작습니다.");
+        }
     }
 }

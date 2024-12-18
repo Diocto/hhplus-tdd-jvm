@@ -20,14 +20,23 @@ public class PointServiceTest {
         // 예외가 발생하지 않으면 실패
         assertThrows(UserPointBadUsageException.class, () -> pointService.usePoint(1, 0));
     }
+
+    @Test
+    void useNegativePoint() {
+        // 1. 포인트 사용
+        // 1.4 사용할 포인트가 0보다 작은 경우
+        PointService pointService = new PointService();
+
+        // 예외가 발생하지 않으면 실패
+        assertThrows(UserPointBadUsageException.class, () -> pointService.usePoint(1, -1));
+    }
     // 1. 포인트 사용
     // 1.1 사용을 실패하는 경우 - 사용할 포인트가 0
-    // 1.2 사용을 실패하는 경우 - 사용할 포인트보다 보유한 포인트가 적은 경우
 
     // 1.3 사용할 포인트가 0인 경우
-    // 1.4 사용할 포인트가 0보다 작은 경우
     // 1.5 사용할 포인트가 null인 경우
 
+    // 1.2 사용을 실패하는 경우 - 사용할 포인트보다 보유한 포인트가 적은 경우
     // 1.6 사용할 포인트가 남은 포인트보다 적은 경우
     // 1.7 사용할 포인트가 남은 포인트와 같은 경우
 
