@@ -1,6 +1,9 @@
 package io.hhplus.tdd.point;
 
+import io.hhplus.tdd.exception.UserPointBadUsageException;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PointServiceTest {
     // 서비스 테스트케이스
@@ -8,6 +11,15 @@ public class PointServiceTest {
     // 2. 예외 케이스부터 구현할 것
     // 3. 성공하는 케이스를 구현할 것
 
+    @Test
+    void useZeroPoint() {
+        // 1. 포인트 사용
+        // 1.1 사용을 실패하는 경우 - 사용할 포인트가 0
+        PointService pointService = new PointService();
+
+        // 예외가 발생하지 않으면 실패
+        assertThrows(UserPointBadUsageException.class, () -> pointService.usePoint(1, 0));
+    }
     // 1. 포인트 사용
     // 1.1 사용을 실패하는 경우 - 사용할 포인트가 0
     // 1.2 사용을 실패하는 경우 - 사용할 포인트보다 보유한 포인트가 적은 경우
