@@ -18,13 +18,15 @@ public class PointServiceTest {
 
     @Mock
     private UserPointRepository userPointRepositoryMock;
+    @Mock
+    private PointHistoryRepository pointHistoryRepositoryMock;
 
     private PointService uut;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this); // Mock 초기화
-        uut = new PointService(userPointRepositoryMock);
+        uut = new PointService(userPointRepositoryMock, pointHistoryRepositoryMock);
     }
 
     @Test
@@ -138,5 +140,35 @@ public class PointServiceTest {
             UserPoint userPoint = uut.viewPoint(1L);
             assert userPoint.point() == 100;
         });
+    }
+
+    // 4. 포인트 히스토리 기록여부
+    // 충전, 사용처리를 진행할 경우
+    // 4.1 충전시에 유저 히스토리에 충전으로 저장을 호출해야함
+    @Test
+    void chargeUserPointSaveHistory() {
+        // given
+        when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 0, System.currentTimeMillis()));
+
+        // when
+        assertDoesNotThrow(() -> {
+            uut.chargePoint(1L, 9299L);
+        });
+
+        verify(pointHistoryRepositoryMock, times(1)).saveUserPointHistory(1L, TransactionType.CHARGE, 9299L);
+    }
+
+    // 4.2 사용시에 유저 히스토리에 사용으로 저장을 호출해야함.
+    @Test
+    void useUserPointSaveHistory() {
+        // given
+        when(userPointRepositoryMock.findByUserId(1)).thenReturn(new UserPoint(1, 10, System.currentTimeMillis()));
+
+        // when
+        assertDoesNotThrow(() -> {
+            uut.usePoint(1L, 1L);
+        });
+
+        verify(pointHistoryRepositoryMock, times(1)).saveUserPointHistory(1L, TransactionType.USE, 1L);
     }
 }
