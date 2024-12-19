@@ -15,10 +15,10 @@ public class PointHistoryRepository {
     }
 
     List<PointHistory> getUserPointHistory(Long userId){
-        return new ArrayList<>();
+        return this.pointHistoryTable.selectAllByUserId(userId);
     }
 
     void saveUserPointHistory(Long userId, TransactionType type, Long point){
-        return;
+        this.pointHistoryTable.insert(userId, point, type, System.currentTimeMillis());
     }
 }
