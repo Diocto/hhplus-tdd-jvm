@@ -3,7 +3,6 @@ package io.hhplus.tdd.point;
 import io.hhplus.tdd.database.PointHistoryTable;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
