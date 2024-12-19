@@ -6,6 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -49,5 +52,16 @@ public class PointControllerTest {
         UserPoint userpoint = uut.use(1L, 10L);
         verify(pointServiceMock, times(1)).usePoint(1L, 10L);
         assertEquals(userpoint, givenUserPoint);
+    }
+
+    @Test
+    void viewPointHistory(){
+        List<PointHistory> pointHistoryList = new ArrayList<>();
+        pointHistoryList.add(new PointHistory(1L, 1L, 10L, TransactionType.CHARGE, System.currentTimeMillis()));
+        pointHistoryList.add(new PointHistory(2L, 1L, 10L, TransactionType.USE, System.currentTimeMillis()));
+        when(pointServiceMock.viewPointHistory(1L)).thenReturn(pointHistoryList);
+        List<PointHistory> pointHistory = uut.history(1L);
+        verify(pointServiceMock, times(1)).viewPointHistory(1L);
+        assertEquals(pointHistoryList, pointHistory);
     }
 }

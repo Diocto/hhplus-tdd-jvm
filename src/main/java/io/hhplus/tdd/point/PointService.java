@@ -3,6 +3,8 @@ package io.hhplus.tdd.point;
 import io.hhplus.tdd.exception.UserPointBadUsageException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class PointService {
     private static final int MAX_POINT_CHARGE = 10_000_000;
@@ -49,5 +51,9 @@ public class PointService {
 
     public UserPoint viewPoint(Long userId) {
         return userPointRepository.findByUserId(userId);
+    }
+
+    public List<PointHistory> viewPointHistory(Long userId){
+        return pointHistoryRepository.getUserPointHistory(userId);
     }
 }
