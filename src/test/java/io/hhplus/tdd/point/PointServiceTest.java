@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class PointServiceTest {
@@ -142,7 +145,7 @@ public class PointServiceTest {
         });
     }
 
-    // 4. 포인트 히스토리 기록여부
+    // 4. 포인트 히스토리
     // 충전, 사용처리를 진행할 경우
     // 4.1 충전시에 유저 히스토리에 충전으로 저장을 호출해야함
     @Test
@@ -170,5 +173,21 @@ public class PointServiceTest {
         });
 
         verify(pointHistoryRepositoryMock, times(1)).saveUserPointHistory(1L, TransactionType.USE, 1L);
+    }
+
+    // 4.3 포인트 히스토리 조회기능시 레포지토리 호출 여부 확인
+    @Test
+    void viewPointHistory() {
+        List<PointHistory> givenPointHistoryList = new ArrayList<>();
+        givenPointHistoryList.add(new PointHistory(1L, 1L, 100L, TransactionType.USE, System.currentTimeMillis()));
+        when(pointHistoryRepositoryMock.getUserPointHistory(1L)).thenReturn(givenPointHistoryList);
+
+        assertDoesNotThrow(() -> {
+            List<PointHistory> pointHistoryList = uut.viewPointHistory(1L);
+            assertEquals(pointHistoryList, givenPointHistoryList);
+
+        });
+
+        verify(pointHistoryRepositoryMock, times(1)).getUserPointHistory(1L);
     }
 }
