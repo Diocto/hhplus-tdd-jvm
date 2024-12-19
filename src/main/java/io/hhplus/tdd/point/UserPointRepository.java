@@ -14,7 +14,7 @@ public class UserPointRepository {
         return userPointTable.selectById(userId);
     }
 
-    public void save(Long userId, Long point) {
-        userPointTable.insertOrUpdate(userId, point);
+    public UserPoint save(Long userId, Long point) {
+        return userPointTable.insertOrUpdate(userId, point);
     }
 }

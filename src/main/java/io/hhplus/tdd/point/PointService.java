@@ -13,7 +13,7 @@ public class PointService {
         this.userPointRepository = userPointRepository;
     }
 
-    public void usePoint(Long userId, Long point) {
+    public UserPoint usePoint(Long userId, Long point) {
         if (point == 0) {
             throw new UserPointBadUsageException("사용할 포인트가 0입니다.");
         }
@@ -24,10 +24,10 @@ public class PointService {
         if (userPoint.point() < point) {
             throw new UserPointBadUsageException("사용할 포인트가 보유한 포인트보다 많습니다.");
         }
-        userPointRepository.save(userId, userPoint.point() - point);
+        return userPointRepository.save(userId, userPoint.point() - point);
     }
 
-    public void chargePoint(Long userId, Long point) {
+    public UserPoint chargePoint(Long userId, Long point) {
         if (point == 0) {
             throw new UserPointBadUsageException("충전할 포인트가 0입니다.");
         }
@@ -39,7 +39,7 @@ public class PointService {
         if (userPoint.point() + point > MAX_POINT_CHARGE) {
             throw new UserPointBadUsageException("최대 충전 가능한 포인트는 " + MAX_POINT_CHARGE + "입니다.");
         }
-        userPointRepository.save(userId, userPoint.point() + point);
+        return userPointRepository.save(userId, userPoint.point() + point);
     }
 
     public UserPoint viewPoint(Long userId) {

@@ -46,8 +46,7 @@ public class PointController {
             @PathVariable long id,
             @RequestBody long amount
     ) {
-        this.pointService.chargePoint(id, amount);
-        return this.pointService.viewPoint(id);
+        return this.pointService.chargePoint(id, amount);
     }
 
     /**
@@ -58,7 +57,6 @@ public class PointController {
             @PathVariable long id,
             @RequestBody long amount
     ) {
-        this.pointService.usePoint(id, amount);
-        return this.pointService.viewPoint(id);
+        return this.pointService.usePoint(id, amount);
     }
 }
