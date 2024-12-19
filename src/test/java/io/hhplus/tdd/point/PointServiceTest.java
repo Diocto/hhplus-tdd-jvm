@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point;
 
+import io.hhplus.tdd.concurrency.UserLockProviderService;
 import io.hhplus.tdd.exception.UserPointBadUsageException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,13 +23,15 @@ public class PointServiceTest {
     private UserPointRepository userPointRepositoryMock;
     @Mock
     private PointHistoryRepository pointHistoryRepositoryMock;
+    @Mock
+    private UserLockProviderService userLockProviderServiceMock;
 
     private PointService uut;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this); // Mock 초기화
-        uut = new PointService(userPointRepositoryMock, pointHistoryRepositoryMock);
+        uut = new PointService(userPointRepositoryMock, pointHistoryRepositoryMock, userLockProviderServiceMock);
     }
 
     @Test

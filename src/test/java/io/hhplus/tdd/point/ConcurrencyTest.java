@@ -30,7 +30,7 @@ public class ConcurrencyTest {
 
     @Test
     public void testConcurrentUseAndCharge() throws Exception {
-        int threadCount = 10;
+        int threadCount = 50;
         long userId = 2;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
